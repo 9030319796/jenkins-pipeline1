@@ -2,6 +2,7 @@ pipeline {
     agent any
     
     stages{
+        
        stage('SonarQube Analysis') {
          steps {
            script {

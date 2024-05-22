@@ -17,14 +17,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh 'docker build -t kelvinskell/python-http-server .'
+                    sh 'docker build -t sundarp1985/python-http-server .'
             }
         }
     }
         stage('Containerize And Test') {
             steps {
                 script{
-                    sh 'docker run -d --name python-app kelvinskell/python-http-server && sleep 10 && docker stop python-app'
+                    sh 'docker run -d --name python-app sundarp1985/python-http-server && sleep 10 && docker stop python-app'
                 }
             }
         }
@@ -32,8 +32,8 @@ pipeline {
             steps {
                 script{
                     withCredentials([string(credentialsId: 'DockerHubPass', variable: 'DockerHubpass')]) {
-                    sh 'docker login -u kelvinskell --password ${DockerHubpass}' }
-                    sh 'docker push kelvinskell/python-http-server'
+                    sh 'docker login -u sundarp1985 --password ${DockerHubpass}' }
+                    sh 'docker push sundarp1985/python-http-server'
                 }
             }
         }    

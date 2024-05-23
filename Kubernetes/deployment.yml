@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: python:alpine3.20
+        image: sundarp1985/python-http-server:tagname
         ports:
         - containerPort: 8080

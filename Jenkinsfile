@@ -1,0 +1,102 @@
+pipeline{
+    agent any
+    tools{
+        jdk 'jdk'
+        python3 'python3'
+    }
+    environment {
+        SCANNER_HOME=tool 'sonar-server'
+    }
+    stages {
+        stage('Workspace Cleaning'){
+            steps{
+                cleanWs()
+            }
+        }
+        stage('Checkout from Git'){
+            steps{
+                git branch: 'master', url: 'https://github.com/sundarp1438/jenkins-pipeline.git'
+            }
+        }
+        stage("Sonarqube Analysis"){
+            steps{
+                withSonarQubeEnv('sonar-server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Python \
+                    -Dsonar.projectKey=Python \
+                    '''
+                }
+            }
+        }
+        stage("Quality Gate"){
+           steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                }
+            } 
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh "npm install"
+            }
+        }
+        
+        stage('TRIVY FS SCAN') {
+            steps {
+                sh "trivy fs . > trivyfs.txt"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script{
+                    sh 'docker build -t sundarp1985/python-http-server .'
+                }
+            }
+        }
+        stage('Containerize And Test') {
+            steps {
+                script{
+                    sh 'docker run -d --name python-app sundarp1985/python-http-server && sleep 10 && docker stop python-app'
+                }
+            }
+        }
+        stage('Push Image To Dockerhub') {
+            steps {
+                script{
+                    withCredentials([string(credentialsId: 'DockerHubPass', variable: 'DockerHubpass')]) {
+                    sh 'docker login -u sundarp1985 --password ${DockerHubpass}' }
+                    sh 'docker push sundarp1985/python-http-server:latest'
+                }
+            }
+        }    
+        stage("TRIVY Image Scan"){
+            steps{
+                sh "trivy image sundarp1985/python-http-server:latest > trivyimage.txt" 
+            }
+        }
+        stage('Deploy to Kubernetes'){
+            steps{
+                script{
+                    dir('Kubernetes') {
+                        withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                                sh 'kubectl apply -f deployment.yml'
+                                sh 'kubectl apply -f service.yml'
+                                sh 'kubectl get svc'
+                                sh 'kubectl get all'
+                        }   
+                    }
+                }
+            }
+        }
+    }
+    post {
+     always {
+        emailext attachLog: true,
+            subject: "'${currentBuild.result}'",
+            body: "Project: ${env.JOB_NAME}<br/>" +
+                "Build Number: ${env.BUILD_NUMBER}<br/>" +
+                "URL: ${env.BUILD_URL}<br/>",
+            to: 'penta.sundar85@gmail.com',
+            attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+        }
+    }
+}

@@ -4,9 +4,9 @@ pipeline{
         jdk 'JAVA_HOME'
         // python3 'python3'
     }
-    environment {
-        SCANNER_HOME=tool 'sonar_server'
-    }
+    // environment {
+    //     SCANNER_HOME=tool 'sonar_server'
+    // }
     stages {
         stage('Workspace Cleaning'){
             steps{

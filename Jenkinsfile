@@ -5,7 +5,7 @@ pipeline{
         // python3 'python3'
     }
     environment {
-        SCANNER_HOME=tool 'SONAR_HOME'
+        SCANNER_HOME=tool 'sonar_server'
     }
     stages {
         stage('Workspace Cleaning'){
@@ -20,8 +20,8 @@ pipeline{
         }
         stage("Sonarqube Analysis"){
             steps{
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar_scanner -Dsonar.projectName=Python \
+                withSonarQubeEnv('sonar_server') {
+                    sh ''' $SCANNER_HOME/bin/sonar_server -Dsonar.projectName=Python \
                     -Dsonar.projectKey=Python \
                     '''
                 }

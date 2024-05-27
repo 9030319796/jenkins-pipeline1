@@ -18,22 +18,33 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/9030319796/jenkins-pipeline1.git'
             }
         }
-        stage("Sonarqube Analysis"){
-            steps{
-                withSonarQubeEnv('sonar_server') {
-                    sh ''' $SCANNER_HOME/bin/sonar_server -Dsonar.projectName=Python \
-                    -Dsonar.projectKey=Python \
-                    '''
-                }
-            }
-        }
-        stage("Quality Gate"){
-           steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: '731696616771c546da7b35333248cfaa0835e0f1' 
-                }
-            } 
-        }
+        // stage("Sonarqube Analysis"){
+        //     steps{
+        //         withSonarQubeEnv('SCANNER_HOME') {
+        //             sh ''' $SCANNER_HOME/bin/sonar_scanner -Dsonar.projectName=Python \
+        //             -Dsonar.projectKey=Python \
+        //             '''
+        //         }
+        //     }
+        // }
+    //     stage('SonarQube Analysis') {
+    //     steps {
+    //       script {
+    //           // requires SonarQube Scanner 2.8+
+    //          scannerHome = tool 'SonarScanner'
+    //       }
+    //       withSonarQubeEnv('SonarQube Server') {
+    //         sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=731696616771c546da7b35333248cfaa0835e0f1"
+    //       }
+    //   }
+    // }
+        // stage("Quality Gate"){
+        //    steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: '731696616771c546da7b35333248cfaa0835e0f1' 
+        //         }
+        //     } 
+        // }
         // stage('Install Dependencies') {
         //     steps {
         //         sh "apt-get install python3"

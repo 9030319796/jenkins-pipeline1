@@ -1,8 +1,8 @@
 pipeline{
     agent any
     tools{
-        jdk 'jdk'
-        python3 'python3'
+        jdk 'JAVA_HOME'
+        // python3 'python3'
     }
     environment {
         SCANNER_HOME=tool 'SONAR_HOME'
@@ -34,11 +34,11 @@ pipeline{
                 }
             } 
         }
-        stage('Install Dependencies') {
-            steps {
-                sh "apt-get install python3"
-            }
-        }
+        // stage('Install Dependencies') {
+        //     steps {
+        //         sh "apt-get install python3"
+        //     }
+        // }
         // stage('OWASP DP SCAN') {
         //     steps {
         //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'owasp-dp-check'

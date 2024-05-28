@@ -4,9 +4,9 @@ pipeline{
         jdk 'JAVA_HOME'
         // python3 'python3'
     }
-    // environment {
-    //     SCANNER_HOME=tool 'sonar_server'
-    // }
+    environment {
+        SCANNER_HOME=tool 'sonar-server'
+    }
     stages {
         stage('Workspace Cleaning'){
             steps{
@@ -18,44 +18,30 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/9030319796/jenkins-pipeline1.git'
             }
         }
-        // stage("Sonarqube Analysis"){
-        //     steps{
-        //         withSonarQubeEnv('SCANNER_HOME') {
-        //             sh ''' $SCANNER_HOME/bin/sonar_scanner -Dsonar.projectName=Python \
-        //             -Dsonar.projectKey=Python \
-        //             '''
-        //         }
-        //     }
-        // }
-    //     stage('SonarQube Analysis') {
-    //     steps {
-    //       script {
-    //           // requires SonarQube Scanner 2.8+
-    //          scannerHome = tool 'SonarScanner'
-    //       }
-    //       withSonarQubeEnv('SonarQube Server') {
-    //         sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=731696616771c546da7b35333248cfaa0835e0f1"
-    //       }
-    //   }
-    // }
-        // stage("Quality Gate"){
-        //    steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: false, credentialsId: '731696616771c546da7b35333248cfaa0835e0f1' 
-        //         }
-        //     } 
-        // }
-        // stage('Install Dependencies') {
-        //     steps {
-        //         sh "apt-get install python3"
-        //     }
-        // }
-        // stage('OWASP DP SCAN') {
-        //     steps {
-        //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'owasp-dp-check'
-        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-        //     }
-        // }
+        stage("Sonarqube Analysis"){
+            steps{
+                withSonarQubeEnv('sonar-server') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Python-app \
+                    -Dsonar.projectKey=Python-app \
+                    '''
+                }
+            }
+        }
+    
+        stage("Quality Gate"){
+           steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                }
+            } 
+        }
+        
+        stage('OWASP DP SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'owasp-dp-check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
         
         stage('TRIVY FS SCAN') {
             steps {
@@ -65,14 +51,14 @@ pipeline{
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh 'docker build -t 9030319796/python-http-server .'
+                    sh 'docker build -t 9030319796/python-http .'
                 }
             }
         }
         stage('Containerize And Test') {
             steps {
                 script{
-                    sh 'docker run -d --name python-app 9030319796/python-http-server && sleep 10 && docker stop python-app'
+                    sh 'docker run -d --name python-app 9030319796/python-http && sleep 10 && docker stop python-app'
                 }
             }
         }
@@ -81,13 +67,13 @@ pipeline{
                 script{
                     withCredentials([string(credentialsId: 'DockerHubPass', variable: 'DockerHubpass')]) {
                     sh 'docker login -u 9030319796 --password ${DockerHubpass}' }
-                    sh 'docker push 9030319796/python-http-server:latest'
+                    sh 'docker push 9030319796/python-http:latest'
                 }
             }
         }    
         stage("TRIVY Image Scan"){
             steps{
-                sh "trivy image 9030319796/python-http-server:latest > trivyimage.txt" 
+                sh "trivy image 9030319796/python-http:latest > trivyimage.txt" 
             }
         }
         // stage('Deploy to Kubernetes'){

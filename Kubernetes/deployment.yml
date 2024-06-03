@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: sundarp1985/python-http-server:latest
+        image: 9030319796/python-http-server:latest
         ports:
         - containerPort: 8080

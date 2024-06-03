@@ -58,7 +58,7 @@ pipeline{
         stage('Containerize And Test') {
             steps {
                 script{
-                    sh 'docker run -d --name python-app 9030319796/python-http && sleep 10 && docker stop python-app'
+                    sh 'docker run -d --name python-app 9030319796/python-http-server && sleep 10 && docker stop python-app'
                 }
             }
         }
@@ -67,13 +67,13 @@ pipeline{
                 script{
                     withCredentials([string(credentialsId: 'DockerHubPass', variable: 'DockerHubpass')]) {
                     sh 'docker login -u 9030319796 --password ${DockerHubpass}' }
-                    sh 'docker push 9030319796/python-http:latest'
+                    sh 'docker push 9030319796/python-http-server:latest'
                 }
             }
         }    
         stage("TRIVY Image Scan"){
             steps{
-                sh "trivy image 9030319796/python-http:latest > trivyimage.txt" 
+                sh "trivy image 9030319796/python-http-server:latest > trivyimage.txt" 
             }
         }
         stage('Deploy to Kubernetes'){

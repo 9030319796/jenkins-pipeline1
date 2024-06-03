@@ -57,7 +57,7 @@ pipeline{
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh 'docker build -t 9030319796/python-http .'
+                    sh 'docker build -t 9030319796/python-http-server .'
                 }
             }
         }

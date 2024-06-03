@@ -1,5 +1,11 @@
 pipeline{
-    agent any
+    agent {
+      label {
+        label 'amazon_linux'
+        retries 5
+       }
+    } 
+
     tools{
         jdk 'JAVA_HOME'
         // python3 'python3'

@@ -1,10 +1,5 @@
 pipeline{
-    agent {
-      label {
-        label 'linux_slave_0.181'
-        retries 5
-       }
-    } 
+    agent any
 
     tools{
         jdk 'JAVA_HOME'

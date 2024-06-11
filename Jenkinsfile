@@ -11,7 +11,7 @@ pipeline{
         // python3 'python3'
     }
     environment {
-        SCANNER_HOME=tool 'sonar-server'
+        // SCANNER_HOME=tool 'sonar-server'
     }
     stages {
         stage('Workspace Cleaning'){
@@ -24,23 +24,23 @@ pipeline{
                 git branch: 'main', url: 'https://github.com/9030319796/jenkins-pipeline1.git'
             }
         }
-        stage("Sonarqube Analysis"){
-            steps{
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Python-app \
-                    -Dsonar.projectKey=Python-app \
-                    '''
-                }
-            }
-        }
+        // stage("Sonarqube Analysis"){
+        //     steps{
+        //         withSonarQubeEnv('sonar-server') {
+        //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Python-app \
+        //             -Dsonar.projectKey=Python-app \
+        //             '''
+        //         }
+        //     }
+        // }
     
-        stage("Quality Gate"){
-           steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-                }
-            } 
-        }
+        // stage("Quality Gate"){
+        //    steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+        //         }
+        //     } 
+        // }
         
         // stage('OWASP DP SCAN') {
         //     steps {

@@ -1,7 +1,7 @@
 pipeline{
     agent {
       label {
-        label 'amazon_linux'
+        label 'linux_slave_0.181'
         retries 5
        }
     } 
@@ -34,20 +34,20 @@ pipeline{
             }
         }
     
-        // stage("Quality Gate"){
-        //    steps {
-        //         script {
-        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-        //         }
-        //     } 
-        // }
-        
-        stage('OWASP DP SCAN') {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'owasp-dp-check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
+        stage("Quality Gate"){
+           steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                }
+            } 
         }
+        
+        // stage('OWASP DP SCAN') {
+        //     steps {
+        //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'owasp-dp-check'
+        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        //     }
+        // }
         
         stage('TRIVY FS SCAN') {
             steps {

@@ -49,11 +49,11 @@ pipeline{
         //     }
         // }
         
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
-            }
-        }
+        // stage('TRIVY FS SCAN') {
+        //     steps {
+        //         sh "trivy fs . > trivyfs.txt"
+        //     }
+        // }
         stage('Build Docker Image') {
             steps {
                 script{
@@ -77,11 +77,11 @@ pipeline{
                 }
             }
         }    
-        stage("TRIVY Image Scan"){
-            steps{
-                sh "trivy image 9030319796/python-http-server:latest > trivyimage.txt" 
-            }
-        }
+        // stage("TRIVY Image Scan"){
+        //     steps{
+        //         sh "trivy image 9030319796/python-http-server:latest > trivyimage.txt" 
+        //     }
+        // }
         stage('Deploy to Kubernetes'){
             steps{
                 script{

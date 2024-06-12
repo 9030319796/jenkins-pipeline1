@@ -1,6 +1,8 @@
 pipeline{
     agent {
-        label linux_slave_0.181
+        label {
+            label 'linux_slave_0.181'
+        }
     }
 
     tools{

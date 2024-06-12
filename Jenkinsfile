@@ -1,5 +1,7 @@
 pipeline{
-    agent any
+    agent {
+        label Linux_agent_0.181
+    }
 
     tools{
         jdk 'JAVA_HOME'

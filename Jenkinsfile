@@ -1,6 +1,6 @@
 pipeline{
     agent {
-        label Linux_agent_0.181
+        label linux_slave_0.181
     }
 
     tools{
